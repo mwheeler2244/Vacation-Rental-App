@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useUser, useAuth, SignInButton, SignUpButton } from "@clerk/nextjs";
 import {
   Bell,
   Home,
@@ -48,9 +47,36 @@ export default function Header({
   setShowUserDashboard,
   setShowHostDashboard,
 }: HeaderProps) {
-  const { isSignedIn, user } = useUser();
-  const { signOut } = useAuth();
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [user, setUser] = useState({
+    firstName: "Guest",
+    primaryEmailAddress: { emailAddress: "guest@example.com" },
+  });
   const headerRef = useRef(null);
+
+  const handleSignOut = () => {
+    setIsSignedIn(false);
+    setUser({
+      firstName: "Guest",
+      primaryEmailAddress: { emailAddress: "guest@example.com" },
+    });
+    showCustomAlert({
+      message: "Successfully signed out!",
+      type: "success",
+    });
+  };
+
+  const handleSignIn = () => {
+    setIsSignedIn(true);
+    setUser({
+      firstName: "John",
+      primaryEmailAddress: { emailAddress: "john@example.com" },
+    });
+    showCustomAlert({
+      message: "Successfully signed in!",
+      type: "success",
+    });
+  };
 
   return (
     <header
@@ -475,7 +501,7 @@ export default function Header({
                           : "hover:bg-gray-100"
                       }`}
                       onClick={() => {
-                        signOut();
+                        handleSignOut();
                         setIsMenuOpen(false);
                       }}
                     >
@@ -489,32 +515,30 @@ export default function Header({
               </motion.div>
             ) : (
               <div className="flex items-center space-x-3">
-                <SignInButton mode="modal">
-                  <motion.button
-                    className={`cursor-pointer px-4 py-2 rounded-md ${
-                      theme === "dark"
-                        ? "bg-gray-800 hover:bg-gray-700 text-white"
-                        : "bg-gray-100 hover:bg-gray-200 text-gray-900"
-                    }`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Log in
-                  </motion.button>
-                </SignInButton>
-                <SignUpButton mode="modal">
-                  <motion.button
-                    className={`cursor-pointer px-4 py-2 rounded-md ${
-                      theme === "dark"
-                        ? "bg-white text-black hover:bg-gray-100"
-                        : "bg-black text-white hover:bg-gray-900"
-                    }`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    Sign up
-                  </motion.button>
-                </SignUpButton>
+                <motion.button
+                  className={`cursor-pointer px-4 py-2 rounded-md ${
+                    theme === "dark"
+                      ? "bg-gray-800 hover:bg-gray-700 text-white"
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-900"
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleSignIn}
+                >
+                  Log in
+                </motion.button>
+                <motion.button
+                  className={`cursor-pointer px-4 py-2 rounded-md ${
+                    theme === "dark"
+                      ? "bg-white text-black hover:bg-gray-100"
+                      : "bg-black text-white hover:bg-gray-900"
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={handleSignIn}
+                >
+                  Sign up
+                </motion.button>
               </div>
             )}
           </div>
