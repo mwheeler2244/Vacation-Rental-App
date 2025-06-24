@@ -1,9 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import {
   Bell,
