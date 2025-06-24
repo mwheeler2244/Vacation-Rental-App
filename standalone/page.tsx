@@ -1,10 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ReactNode } from "react";
-import dynamic from "next/dynamic";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Bell,
   Calendar,
@@ -30,24 +27,6 @@ import {
   Map,
 } from "lucide-react";
 
-// Dynamic import for framer-motion with fallback
-const Motion = dynamic(
-  () => import("framer-motion").then((mod) => mod.motion.div),
-  {
-    ssr: false,
-    loading: () => <div />,
-  }
-);
-
-const AnimatePresence = dynamic(
-  () => import("framer-motion").then((mod) => mod.AnimatePresence),
-  {
-    ssr: false,
-    // Loading function doesn't need to provide children as it's handled internally by dynamic
-    loading: () => null,
-  }
-);
-
 const inlineStyles = `
 
   :root {
@@ -67,9 +46,11 @@ const inlineStyles = `
   body {
     margin: 0;
     padding: 0;
+   
   }
 
   
+
   .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -133,13 +114,6 @@ interface AlertConfig {
 
 export default function EnterpriseTravel() {
   const [theme, setTheme] = useState("light");
-  // Check if motion components are loaded
-  const [motionLoaded, setMotionLoaded] = useState(false);
-
-  useEffect(() => {
-    // Mark motion as loaded once component mounts on client
-    setMotionLoaded(true);
-  }, []);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("explore");
@@ -403,56 +377,36 @@ export default function EnterpriseTravel() {
   if (isLoading) {
     return (
       <div
-        className={`fixed inset-0 flex items-center justify-center ${
+        className={` fixed inset-0 flex items-center justify-center ${
           theme === "dark" ? "bg-gray-900" : "bg-white"
         }`}
       >
         <div className="flex flex-col items-center">
           <div className="relative w-12 h-12">
-            {motionLoaded ? (
-              <Motion
-                className="absolute inset-0 rounded-full border-t-2 border-r-2 border-transparent"
-                style={{
-                  borderTopColor: theme === "dark" ? "#fff" : "#000",
-                  borderRightColor: theme === "dark" ? "#fff" : "#000",
-                }}
-                animate={{ rotate: 360 }}
-                transition={{
-                  duration: 1,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "linear",
-                }}
-              />
-            ) : (
-              <div
-                className="absolute inset-0 rounded-full border-t-2 border-r-2 border-transparent animate-spin"
-                style={{
-                  borderTopColor: theme === "dark" ? "#fff" : "#000",
-                  borderRightColor: theme === "dark" ? "#fff" : "#000",
-                }}
-              />
-            )}
+            <motion.div
+              className="absolute inset-0 rounded-full border-t-2 border-r-2 border-transparent"
+              style={{
+                borderTopColor: theme === "dark" ? "#fff" : "#000",
+                borderRightColor: theme === "dark" ? "#fff" : "#000",
+              }}
+              animate={{ rotate: 360 }}
+              transition={{
+                duration: 1,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: "linear",
+              }}
+            />
           </div>
-          {motionLoaded ? (
-            <Motion
-              className={`mt-4 text-lg font-medium ${
-                theme === "dark" ? "text-white" : "text-gray-800"
-              }`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              Loading...
-            </Motion>
-          ) : (
-            <p
-              className={`mt-4 text-lg font-medium ${
-                theme === "dark" ? "text-white" : "text-gray-800"
-              }`}
-            >
-              Loading...
-            </p>
-          )}
+          <motion.p
+            className={`mt-4 text-lg font-medium ${
+              theme === "dark" ? "text-white" : "text-gray-800"
+            }`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+          >
+            Loading...
+          </motion.p>
         </div>
       </div>
     );
@@ -464,7 +418,6 @@ export default function EnterpriseTravel() {
         theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-900"
       }`}
     >
-      {/* Add global styles */}
       <style jsx global>
         {inlineStyles}
       </style>
@@ -483,78 +436,44 @@ export default function EnterpriseTravel() {
       >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            {motionLoaded ? (
-              <Motion
-                className="flex items-center"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
+            <motion.div
+              className="flex items-center"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div
+                className={`w-8 h-8 rounded-md ${
+                  theme === "dark" ? "bg-white" : "bg-black"
+                } flex items-center justify-center mr-2`}
               >
-                <div
-                  className={`w-8 h-8 rounded-md ${
-                    theme === "dark" ? "bg-white" : "bg-black"
-                  } flex items-center justify-center mr-2`}
-                >
-                  <Home
-                    className={`w-5 h-5 ${
-                      theme === "dark" ? "text-black" : "text-white"
-                    }`}
-                  />
-                </div>
-                <span className="text-xl font-medium">Venture</span>
-              </Motion>
-            ) : (
-              <div className="flex items-center">
-                <div
-                  className={`w-8 h-8 rounded-md ${
-                    theme === "dark" ? "bg-white" : "bg-black"
-                  } flex items-center justify-center mr-2`}
-                >
-                  <Home
-                    className={`w-5 h-5 ${
-                      theme === "dark" ? "text-black" : "text-white"
-                    }`}
-                  />
-                </div>
-                <span className="text-xl font-medium">Venture</span>
+                <Home
+                  className={`w-5 h-5 ${
+                    theme === "dark" ? "text-black" : "text-white"
+                  }`}
+                />
               </div>
-            )}
+              <span className="text-xl font-medium">Venture</span>
+            </motion.div>
 
             <div className="hidden md:flex items-center space-x-6">
-              {motionLoaded ? (
-                <Motion
-                  className={`cursor-pointer px-4 py-2 rounded-md transition-colors ${
-                    activeTab === "explore"
-                      ? `${
-                          theme === "dark"
-                            ? "bg-gray-800 text-white "
-                            : "bg-gray-100 text-gray-900"
-                        }`
-                      : "text-gray-500 "
-                  }`}
-                  onClick={() => (window.location.href = "/")}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Explore
-                </Motion>
-              ) : (
-                <button
-                  className={`cursor-pointer px-4 py-2 rounded-md transition-colors ${
-                    activeTab === "explore"
-                      ? `${
-                          theme === "dark"
-                            ? "bg-gray-800 text-white "
-                            : "bg-gray-100 text-gray-900"
-                        }`
-                      : "text-gray-500 "
-                  }`}
-                  onClick={() => (window.location.href = "/")}
-                >
-                  Explore
-                </button>
-              )}
-              <Motion
+              <motion.button
+                className={`cursor-pointer px-4 py-2 rounded-md transition-colors ${
+                  activeTab === "explore"
+                    ? `${
+                        theme === "dark"
+                          ? "bg-gray-800 text-white "
+                          : "bg-gray-100 text-gray-900"
+                      }`
+                    : "text-gray-500 "
+                }`}
+                onClick={() => (window.location.href = "/")}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Explore
+              </motion.button>
+              <motion.button
                 className={`cursor-pointer px-4 py-2 rounded-md transition-colors ${
                   activeTab === "news"
                     ? `${
@@ -573,8 +492,8 @@ export default function EnterpriseTravel() {
                 whileTap={{ scale: 0.98 }}
               >
                 Insights
-              </Motion>
-              <Motion
+              </motion.button>
+              <motion.button
                 className={`cursor-pointer  px-4 py-2 rounded-md transition-colors ${
                   activeTab === "trips"
                     ? `${
@@ -593,8 +512,8 @@ export default function EnterpriseTravel() {
                 whileTap={{ scale: 0.98 }}
               >
                 My Trips
-              </Motion>
-              <Motion
+              </motion.button>
+              <motion.button
                 className={`cursor-pointer  px-4 py-2 rounded-md transition-colors ${
                   activeTab === "hosting"
                     ? `${
@@ -613,11 +532,11 @@ export default function EnterpriseTravel() {
                 whileTap={{ scale: 0.98 }}
               >
                 Properties
-              </Motion>
+              </motion.button>
             </div>
 
             <div className="flex items-center space-x-4">
-              <Motion
+              <motion.button
                 className={`cursor-pointer p-2 rounded-md ${
                   theme === "dark"
                     ? "bg-gray-800 text-white hover:bg-gray-700"
@@ -632,9 +551,9 @@ export default function EnterpriseTravel() {
                 ) : (
                   <Moon className="w-5 h-5" />
                 )}
-              </Motion>
+              </motion.button>
 
-              <Motion className="relative" whileHover={{ scale: 1.05 }}>
+              <motion.div className="relative" whileHover={{ scale: 1.05 }}>
                 <button
                   className={`cursor-pointer p-2 rounded-md ${
                     theme === "dark"
@@ -652,7 +571,7 @@ export default function EnterpriseTravel() {
                 )}
 
                 {showNotifications && (
-                  <Motion
+                  <motion.div
                     className={`absolute right-0 mt-2 w-80 rounded-lg shadow-lg overflow-hidden ${
                       theme === "dark"
                         ? "bg-gray-800 border border-gray-700"
@@ -813,11 +732,11 @@ export default function EnterpriseTravel() {
                         View all notifications
                       </button>
                     </div>
-                  </Motion>
+                  </motion.div>
                 )}
-              </Motion>
+              </motion.div>
 
-              <Motion className="relative" whileHover={{ scale: 1.05 }}>
+              <motion.div className="relative" whileHover={{ scale: 1.05 }}>
                 <button
                   className={`cursor-pointer flex items-center space-x-2 p-2 rounded-md ${
                     theme === "dark"
@@ -833,7 +752,7 @@ export default function EnterpriseTravel() {
                 </button>
 
                 {isMenuOpen && (
-                  <Motion
+                  <motion.div
                     className={`absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 ${
                       theme === "dark"
                         ? "bg-gray-800 border border-gray-700"
@@ -932,9 +851,9 @@ export default function EnterpriseTravel() {
                         Log out
                       </div>
                     </button>
-                  </Motion>
+                  </motion.div>
                 )}
-              </Motion>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -944,7 +863,7 @@ export default function EnterpriseTravel() {
         {activeTab === "explore" &&
           !showUserDashboard &&
           !showHostDashboard && (
-            <Motion
+            <motion.div
               className={`relative rounded-xl overflow-hidden mb-12`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -961,16 +880,16 @@ export default function EnterpriseTravel() {
               </div>
 
               <div className="relative py-20 px-6 md:px-12 flex flex-col items-center text-center text-white">
-                <Motion
+                <motion.h1
                   className="text-3xl md:text-4xl lg:text-5xl font-medium mb-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2, duration: 0.8 }}
                 >
                   Exceptional Properties for Discerning Travelers
-                </Motion>
+                </motion.h1>
 
-                <Motion
+                <motion.p
                   className="text-lg max-w-2xl mb-8 text-gray-100"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -978,9 +897,9 @@ export default function EnterpriseTravel() {
                 >
                   Premium accommodations and exclusive insights for corporate
                   and executive travelers
-                </Motion>
+                </motion.p>
 
-                <Motion
+                <motion.div
                   className={`w-full max-w-3xl bg-white/10 backdrop-blur-md rounded-md overflow-hidden flex items-center p-2 shadow-lg`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -996,22 +915,22 @@ export default function EnterpriseTravel() {
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
                   </div>
-                  <Motion
+                  <motion.button
                     className="cursor-pointer bg-white text-black px-6 py-3 rounded-md font-medium"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     Search
-                  </Motion>
-                </Motion>
+                  </motion.button>
+                </motion.div>
               </div>
-            </Motion>
+            </motion.div>
           )}
 
         {activeTab === "explore" &&
           !showUserDashboard &&
           !showHostDashboard && (
-            <Motion
+            <motion.div
               className="mb-10"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1020,7 +939,7 @@ export default function EnterpriseTravel() {
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-medium">Property Categories</h2>
                 <div className="flex space-x-2">
-                  <Motion
+                  <motion.button
                     className={`cursor-pointer p-2 rounded-md ${
                       theme === "dark"
                         ? "bg-gray-800 hover:bg-gray-700"
@@ -1030,8 +949,8 @@ export default function EnterpriseTravel() {
                     whileTap={{ scale: 0.95 }}
                   >
                     <ChevronLeft className="w-5 h-5" />
-                  </Motion>
-                  <Motion
+                  </motion.button>
+                  <motion.button
                     className={`cursor-pointer p-2 rounded-md ${
                       theme === "dark"
                         ? "bg-gray-800 hover:bg-gray-700"
@@ -1041,13 +960,13 @@ export default function EnterpriseTravel() {
                     whileTap={{ scale: 0.95 }}
                   >
                     <ChevronRight className="w-5 h-5" />
-                  </Motion>
+                  </motion.button>
                 </div>
               </div>
 
               <div className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar">
                 {categories.map((category) => (
-                  <Motion
+                  <motion.button
                     key={category.id}
                     className={`cursor-pointer flex items-center px-4 py-2 rounded-md whitespace-nowrap transition-colors ${
                       activeCategory === category.id
@@ -1068,10 +987,10 @@ export default function EnterpriseTravel() {
                   >
                     <span className="mr-2">{category.icon}</span>
                     <span>{category.name}</span>
-                  </Motion>
+                  </motion.button>
                 ))}
               </div>
-            </Motion>
+            </motion.div>
           )}
 
         {activeTab === "explore" &&
@@ -1080,7 +999,7 @@ export default function EnterpriseTravel() {
             <div className="mb-16">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-medium">Featured Properties</h2>
-                <Motion
+                <motion.button
                   className={`cursor-pointer px-4 py-2 rounded-md ${
                     theme === "dark"
                       ? "bg-gray-800 hover:bg-gray-700"
@@ -1090,12 +1009,12 @@ export default function EnterpriseTravel() {
                   whileTap={{ scale: 0.98 }}
                 >
                   View all <ChevronRight className="w-4 h-4 ml-1" />
-                </Motion>
+                </motion.button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredListings.map((listing, index) => (
-                  <Motion
+                  <motion.div
                     key={listing.id}
                     className={`rounded-lg overflow-hidden ${
                       theme === "dark" ? "bg-gray-800" : "bg-white"
@@ -1154,7 +1073,7 @@ export default function EnterpriseTravel() {
                             / night
                           </span>
                         </div>
-                        <Motion
+                        <motion.button
                           className={`cursor-pointer px-3 py-1 text-sm rounded-md ${
                             theme === "dark"
                               ? "bg-white text-black"
@@ -1164,17 +1083,17 @@ export default function EnterpriseTravel() {
                           whileTap={{ scale: 0.95 }}
                         >
                           Book
-                        </Motion>
+                        </motion.button>
                       </div>
                     </div>
-                  </Motion>
+                  </motion.div>
                 ))}
               </div>
             </div>
           )}
 
         {activeTab === "news" && !showUserDashboard && !showHostDashboard && (
-          <Motion
+          <motion.div
             className="mb-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1184,7 +1103,7 @@ export default function EnterpriseTravel() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {newsArticles.map((article, index) => (
-                <Motion
+                <motion.div
                   key={article.id}
                   className={`rounded-lg overflow-hidden ${
                     theme === "dark" ? "bg-gray-800" : "bg-white"
@@ -1219,7 +1138,7 @@ export default function EnterpriseTravel() {
                     >
                       {article.excerpt}
                     </p>
-                    <Motion
+                    <motion.button
                       className={`cursor-pointer text-sm font-medium ${
                         theme === "dark"
                           ? "text-white hover:text-gray-300"
@@ -1228,16 +1147,16 @@ export default function EnterpriseTravel() {
                       whileHover={{ x: 5 }}
                     >
                       Read more <ChevronRight className="w-4 h-4 ml-1" />
-                    </Motion>
+                    </motion.button>
                   </div>
-                </Motion>
+                </motion.div>
               ))}
             </div>
-          </Motion>
+          </motion.div>
         )}
 
         {showUserDashboard && (
-          <Motion
+          <motion.div
             className="mb-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1245,7 +1164,7 @@ export default function EnterpriseTravel() {
           >
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-medium">My Travel Portfolio</h2>
-              <Motion
+              <motion.button
                 className={`cursor-pointer px-4 py-2 rounded-md ${
                   theme === "dark"
                     ? "bg-white text-black"
@@ -1262,7 +1181,7 @@ export default function EnterpriseTravel() {
                 }
               >
                 <Plus className="w-4 h-4 mr-1" /> New Booking
-              </Motion>
+              </motion.button>
             </div>
 
             <div className="grid grid-cols-1 gap-6">
@@ -1273,9 +1192,9 @@ export default function EnterpriseTravel() {
                 if (!listing) return null;
 
                 return (
-                  <Motion
+                  <motion.div
                     key={booking.id}
-                    className={`rounded-lg overflow-hidden ${
+                    className={` rounded-lg overflow-hidden ${
                       theme === "dark" ? "bg-gray-800" : "bg-white"
                     } shadow-md`}
                     initial={{ opacity: 0, y: 20 }}
@@ -1366,7 +1285,7 @@ export default function EnterpriseTravel() {
                             </div>
                           </div>
                           <div className="flex space-x-2">
-                            <Motion
+                            <motion.button
                               className={`cursor-pointer px-4 py-2 rounded-md ${
                                 theme === "dark"
                                   ? "bg-gray-700 hover:bg-gray-600"
@@ -1384,8 +1303,8 @@ export default function EnterpriseTravel() {
                             >
                               <MessageSquare className="w-4 h-4 mr-1 inline-block" />{" "}
                               Message
-                            </Motion>
-                            <Motion
+                            </motion.button>
+                            <motion.button
                               className={`px-4 py-2 rounded-md ${
                                 theme === "dark"
                                   ? "bg-white text-black"
@@ -1402,20 +1321,20 @@ export default function EnterpriseTravel() {
                               }
                             >
                               Details
-                            </Motion>
+                            </motion.button>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </Motion>
+                  </motion.div>
                 );
               })}
             </div>
-          </Motion>
+          </motion.div>
         )}
 
         {showHostDashboard && (
-          <Motion
+          <motion.div
             className="mb-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -1423,7 +1342,7 @@ export default function EnterpriseTravel() {
           >
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-medium">Property Management</h2>
-              <Motion
+              <motion.button
                 className={`cursor-pointer px-4 py-2 rounded-md ${
                   theme === "dark"
                     ? "bg-white text-black"
@@ -1440,7 +1359,7 @@ export default function EnterpriseTravel() {
                 }
               >
                 <Plus className="w-4 h-4 mr-1" /> Add Property
-              </Motion>
+              </motion.button>
             </div>
 
             <div
@@ -1448,7 +1367,7 @@ export default function EnterpriseTravel() {
                 theme === "dark" ? "text-white" : "text-gray-900"
               }`}
             >
-              <Motion
+              <motion.div
                 className={`rounded-lg p-6 ${
                   theme === "dark" ? "bg-gray-800" : "bg-white"
                 } shadow-md cursor-pointer`}
@@ -1473,9 +1392,9 @@ export default function EnterpriseTravel() {
                 <div className="flex items-center mt-2 text-green-500">
                   <span className="text-sm">+12% from last month</span>
                 </div>
-              </Motion>
+              </motion.div>
 
-              <Motion
+              <motion.div
                 className={`rounded-lg p-6 ${
                   theme === "dark" ? "bg-gray-800" : "bg-white"
                 } shadow-md cursor-pointer`}
@@ -1500,9 +1419,9 @@ export default function EnterpriseTravel() {
                 <div className="flex items-center mt-2 text-green-500">
                   <span className="text-sm">+5% from last month</span>
                 </div>
-              </Motion>
+              </motion.div>
 
-              <Motion
+              <motion.div
                 className={`rounded-lg p-6 ${
                   theme === "dark" ? "bg-gray-800" : "bg-white"
                 } shadow-md cursor-pointer`}
@@ -1536,13 +1455,13 @@ export default function EnterpriseTravel() {
                 <div className="flex items-center mt-2 text-green-500">
                   <span className="text-sm">107 reviews</span>
                 </div>
-              </Motion>
+              </motion.div>
             </div>
 
             <h3 className="text-lg font-medium mb-4">Your Properties</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {hostListings.map((listing, index) => (
-                <Motion
+                <motion.div
                   key={listing.id}
                   className={`rounded-lg overflow-hidden ${
                     theme === "dark" ? "bg-gray-800" : "bg-white"
@@ -1626,7 +1545,7 @@ export default function EnterpriseTravel() {
                       </div>
 
                       <div className="flex space-x-2 mt-3">
-                        <Motion
+                        <motion.button
                           className={`cursor-pointer px-3 py-1 rounded-md ${
                             theme === "dark"
                               ? "bg-gray-700 hover:bg-gray-600"
@@ -1634,7 +1553,7 @@ export default function EnterpriseTravel() {
                           } text-sm`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={(e: React.MouseEvent) => {
+                          onClick={(e) => {
                             e.stopPropagation();
                             showCustomAlert({
                               message: `Opening editor for ${listing.title}...`,
@@ -1644,8 +1563,8 @@ export default function EnterpriseTravel() {
                           }}
                         >
                           Edit
-                        </Motion>
-                        <Motion
+                        </motion.button>
+                        <motion.button
                           className={`cursor-pointer px-3 py-1 rounded-md ${
                             theme === "dark"
                               ? "bg-gray-700 hover:bg-gray-600"
@@ -1653,7 +1572,7 @@ export default function EnterpriseTravel() {
                           } text-sm`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={(e: React.MouseEvent) => {
+                          onClick={(e) => {
                             e.stopPropagation();
                             showCustomAlert({
                               message: `Opening calendar for ${listing.title}...`,
@@ -1663,8 +1582,8 @@ export default function EnterpriseTravel() {
                           }}
                         >
                           Calendar
-                        </Motion>
-                        <Motion
+                        </motion.button>
+                        <motion.button
                           className={`cursor-pointer px-3 py-1 rounded-md ${
                             theme === "dark"
                               ? "bg-white text-black"
@@ -1672,7 +1591,7 @@ export default function EnterpriseTravel() {
                           } text-sm`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          onClick={(e: React.MouseEvent) => {
+                          onClick={(e) => {
                             e.stopPropagation();
                             showCustomAlert({
                               message: `Opening detailed view for ${listing.title}...`,
@@ -1682,27 +1601,26 @@ export default function EnterpriseTravel() {
                           }}
                         >
                           View
-                        </Motion>
+                        </motion.button>
                       </div>
                     </div>
                   </div>
-                </Motion>
+                </motion.div>
               ))}
             </div>
-          </Motion>
+          </motion.div>
         )}
       </main>
 
-      {/* Update the AnimatePresence usage for the booking modal */}
       <AnimatePresence>
         {showBookingModal && selectedListing && (
-          <Motion
-            className="fixed inset-0 z-50 flex items-center justify-center p-6 md:p-8"
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center p-6  md:p-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <Motion
+            <motion.div
               className="absolute inset-0 bg-black/60 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -1710,7 +1628,7 @@ export default function EnterpriseTravel() {
               onClick={() => setShowBookingModal(false)}
             />
 
-            <Motion
+            <motion.div
               className={`relative w-full max-w-3xl rounded-lg ${
                 theme === "dark" ? "bg-gray-900" : "bg-white"
               } shadow-xl my-8 max-h-[90vh] overflow-y-auto hide-scrollbar`}
@@ -1985,7 +1903,7 @@ export default function EnterpriseTravel() {
                         </div>
                       </div>
 
-                      <Motion
+                      <motion.button
                         className={`cursor-pointer w-full py-3 rounded-md ${
                           theme === "dark"
                             ? "bg-white text-black"
@@ -1996,7 +1914,7 @@ export default function EnterpriseTravel() {
                         whileTap={{ scale: 0.98 }}
                       >
                         Reserve
-                      </Motion>
+                      </motion.button>
 
                       <div className="mt-4">
                         <div className="flex justify-between mb-2">
@@ -2054,14 +1972,14 @@ export default function EnterpriseTravel() {
                   </div>
                 </div>
               </div>
-            </Motion>
-          </Motion>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
 
       <AnimatePresence>
         {showAlert && (
-          <Motion
+          <motion.div
             className="fixed top-4 right-4 z-50"
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -2095,16 +2013,16 @@ export default function EnterpriseTravel() {
               >
                 Successfully completed
               </p>
-              <Motion
+              <motion.button
                 className="cursor-pointer text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                 onClick={() => setShowAlert(false)}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
                 <X className="w-4 h-4" />
-              </Motion>
+              </motion.button>
             </div>
-          </Motion>
+          </motion.div>
         )}
       </AnimatePresence>
 
