@@ -2,7 +2,7 @@
 
 A modern, full-featured travel and accommodation booking platform built with Next.js, designed for executive and business travelers. Features a sleek, responsive interface with dark/light theme support, advanced property management, and comprehensive booking functionality.
 
-##  Demo
+## 👀 Demo
 https://vacation-rental-app-2867.vercel.app/
 
 ## ✨ Features
