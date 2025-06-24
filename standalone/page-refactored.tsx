@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useUser, useAuth } from "@clerk/nextjs";
 import { Listing, AlertConfig, BookingDates } from "./types";
 import { listings as mockListings } from "./data/mockData";
 
@@ -44,7 +43,9 @@ const inlineStyles = `
 `;
 
 export default function EnterpriseTravel() {
-  const { isSignedIn, user, isLoaded } = useUser();
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [user, setUser] = useState({ firstName: "Guest" });
+  const [isLoaded, setIsLoaded] = useState(false);
   const [theme, setTheme] = useState("light");
 
   // UI State
@@ -86,7 +87,10 @@ export default function EnterpriseTravel() {
     };
 
     window.addEventListener("scroll", handleScroll);
-    const timer = setTimeout(() => setIsLoading(false), 2000);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      setIsLoaded(true);
+    }, 2000);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
